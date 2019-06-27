@@ -10,11 +10,33 @@ module.exports = {
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {
+      '/api': {  //使用"/api"来代替"http://155.138.239.37:8081",'http://47.103.8.63:8081','http://212.64.15.39:8081','http://120.78.81.34:8081',它们的http://39.97.187.112:8081
+        target: 'http://47.103.8.63:8081', //源地址
+        changeOrigin: true, //改变源
+        pathRewrite: {
+          '^/api': 'http://47.103.8.63:8081' //路径重写
+        }
+      },
+      '/two': {  //twitter
+        target: 'http://120.78.81.34:8083', //源地址
+        changeOrigin: true, //改变源
+        pathRewrite: {
+          '^/two': 'http://120.78.81.34:8083' //路径重写
+        }
+      },
+      '/three': {  //linkedIn
+        target: 'http://120.78.81.34:8085', //源地址
+        changeOrigin: true, //改变源
+        pathRewrite: {
+          '^/three': 'http://120.78.81.34:8085' //路径重写
+        }
+      }
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
-    port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    port: 8083, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
     errorOverlay: true,
     notifyOnErrors: true,

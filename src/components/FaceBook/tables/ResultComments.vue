@@ -1,0 +1,202 @@
+<template>
+    <div id="ResultTable5">
+        <h2>Comments-Section</h2>
+        <el-table id="Data4" :data="Data4.slice((currentPage-1)*pagesize,currentPage*pagesize)" stripe style="width: 100%" height="600" border empty-text="NO DATA">
+            <el-table-column prop="#" label="#" width="50" type="index" fixed></el-table-column>
+            <el-table-column prop="poster_id" label="poster_id" width="180" fixed></el-table-column>
+            <el-table-column prop="poster_name" label="poster_name" width="180"></el-table-column>
+            <el-table-column label="avatar" width="150">
+                <template slot-scope="scope">
+                    <el-popover
+                        placement="right"
+                        trigger="hover">
+                        <img v-if="scope.row" :src="getAvatar(scope.row)" width=100% height=100%>
+                        <img slot="reference" :src="getAvatar(scope.row)" :alt="getAvatar(scope.row)" width=100% height=100%>
+                    </el-popover>
+                </template>
+            </el-table-column>
+            <el-table-column prop="post_content" label="post_content" width="400"></el-table-column>
+            <el-table-column prop="post_imgs" label="post_imgs" width="400"></el-table-column>
+            <el-table-column prop="post_timestamp" label="post_timestamp" width="180"></el-table-column>
+            <el-table-column prop="post_id" label="post_id" width="180"></el-table-column>
+            <el-table-column prop="poster_url" label="poster_url" width="400"></el-table-column>
+            <el-table-column prop="screen_name" label="screen_name" width="180"></el-table-column>
+            <el-table-column prop="like_relation_url" label="like_relation_url" width="400"></el-table-column>
+            <el-table-column prop="comment_id" label="comment_id" width="180"></el-table-column>
+            <el-table-column prop="commenter_name" label="commenter_name" width="180"></el-table-column>
+            <el-table-column prop="commenter_url" label="commenter_url" width="400"></el-table-column>
+            <el-table-column prop="comment_text" label="comment_text" width="400"></el-table-column>
+            <el-table-column prop="comment_timestamp" label="comment_timestamp" width="180"></el-table-column>
+            <el-table-column prop="Reply" label="Reply" width="120"></el-table-column>
+            <el-table-column prop="replies_number" label="replies_number" width="150"></el-table-column>
+            <el-table-column prop="replies_urls" label="replies_urls" width="400"></el-table-column>
+            <el-table-column prop="like_number" label="like_number" width="120"></el-table-column>
+            <el-table-column prop="like_url" label="like_url" width="120"></el-table-column>
+        </el-table>
+        <el-table id="Data4All" :data="Data4All" stripe style="width: 100%" height="600" border empty-text="NO DATA" hidden>
+            <el-table-column prop="#" label="#" width="50" type="index" fixed></el-table-column>
+            <el-table-column prop="poster_id" label="poster_id" width="180" fixed></el-table-column>
+            <el-table-column prop="poster_name" label="poster_name" width="180"></el-table-column>
+            <el-table-column label="avatar" width="150">
+                <template slot-scope="scope">
+                    <el-popover
+                        placement="right"
+                        trigger="hover">
+                        <img v-if="scope.row" :src="getAvatar(scope.row)" width=100% height=100%>
+                        <img slot="reference" :src="getAvatar(scope.row)" :alt="getAvatar(scope.row)" width=100% height=100%>
+                    </el-popover>
+                </template>
+            </el-table-column>
+            <el-table-column prop="post_content" label="post_content" width="400"></el-table-column>
+            <el-table-column prop="post_imgs" label="post_imgs" width="400"></el-table-column>
+            <el-table-column prop="post_timestamp" label="post_timestamp" width="180"></el-table-column>
+            <el-table-column prop="post_id" label="post_id" width="180"></el-table-column>
+            <el-table-column prop="poster_url" label="poster_url" width="400"></el-table-column>
+            <el-table-column prop="screen_name" label="screen_name" width="180"></el-table-column>
+            <el-table-column prop="like_relation_url" label="like_relation_url" width="400"></el-table-column>
+            <el-table-column prop="comment_id" label="comment_id" width="180"></el-table-column>
+            <el-table-column prop="commenter_name" label="commenter_name" width="180"></el-table-column>
+            <el-table-column prop="commenter_url" label="commenter_url" width="400"></el-table-column>
+            <el-table-column prop="comment_text" label="comment_text" width="400"></el-table-column>
+            <el-table-column prop="comment_timestamp" label="comment_timestamp" width="180"></el-table-column>
+            <el-table-column prop="Reply" label="Reply" width="120"></el-table-column>
+            <el-table-column prop="replies_number" label="replies_number" width="150"></el-table-column>
+            <el-table-column prop="replies_urls" label="replies_urls" width="400"></el-table-column>
+            <el-table-column prop="like_number" label="like_number" width="120"></el-table-column>
+            <el-table-column prop="like_url" label="like_url" width="120"></el-table-column>
+        </el-table>
+        <el-button class="ripple" type="primary" @click="ExportList" style="float:right;margin:15px;background: #2E8B57">Export</el-button>
+        <div style="text-align: center;margin-top: 30px;">
+            <el-pagination
+                background
+                layout="prev, pager, next"
+                :total="total"
+                @current-change="current_change">
+            </el-pagination>
+        </div>
+
+        <el-dialog
+            title="NOTICE"
+            :visible.sync="ExportDialogVisible"
+            width="33%"
+            center
+            style="margin-bottom:100px;padding-top:150px;">
+            <span>You are about to export the data for this table.</span>
+            <span>Please select the format you want to export:</span>
+            <span slot="footer" class="dialog-footer">
+                <el-button class="ripple" type="primary" @click="ExportDialogVisible = false;Export1()" style="background: #2E8B57">JSON</el-button>
+                <el-button class="ripple" type="primary" @click="ExportDialogVisible = false;Export2()" style="background: #2E8B57">CSV</el-button>
+                <el-button class="ripple" type="primary" @click="ExportDialogVisible = false;Export3()" style="background: #2E8B57">XLSX</el-button>
+                <el-button @click="ExportDialogVisible = false">Cancel</el-button>
+            </span>
+        </el-dialog>
+    </div>
+</template>
+
+<script>
+import FileSaver from "file-saver"
+import XLSX from "xlsx"
+export default {
+    name: 'ResultComments',
+    props:["message"],
+    data () {
+        return {
+            Data4 : [],
+            total: 0,
+            Data4All: [],
+            pagesize: 10,
+            currentPage: 1,
+            ExportDialogVisible: false,
+            //该表格的json数据串
+            Data4_jsondata: '',
+            picture: []   //放置头像图片数据
+        }
+    },
+    watch:{
+        message:function(){
+            this.$nextTick( function(){
+                this.Data4_jsondata = this.message
+                this.Data4 = this.message
+                this.Data4All = this.message
+                this.total=this.Data4.length
+                //拿到头像图片数据
+                if(this.Data4.id){
+                    var Params = {
+                        id: this.Data4.id
+                    }
+                    this.$ajax({
+                        url: '/api/img/pictures',
+                        method: 'get',
+                        contentType: "application/json; charset=utf-8",
+                        params: Params
+                    }).then( res => {
+                        this.picture = res.data.data
+                    }).catch( error => {
+                        console.log()
+                    })
+                }
+                else{
+                    console.log("ao")
+                }
+            })
+        }
+    },
+    methods: {
+        current_change:function(currentPage){
+            this.currentPage = currentPage;
+        },
+        getAvatar(row) {
+            for(var i=0;i<this.picture.length;i++)
+                if(this.picture[i].indexOf(row.user_id)!=-1)
+                    return this.picture[i]
+        },
+        //导出查询的数据
+        ExportList() {
+        this.ExportDialogVisible = true;
+        },
+        //输出JSON格式数据下载
+        Export1() {
+            var blob = new Blob([JSON.stringify(this.Data4_jsondata, null, 2)],{type:'application/json,charset=utf-8;'});
+            saveAs(blob, "comments_result" + '.json');
+        },
+        //输出CSV格式数据下载
+        Export2() {
+            var fix = document.querySelector('.el-table__fixed');
+            let table = document.querySelector("#Data4All").cloneNode(true);
+            if(fix)
+                var wb = XLSX.utils.table_to_book(table.removeChild(table.querySelector(".el-table__fixed")))
+            else
+                var wb = XLSX.utils.table_to_book(table)
+            var wbout = XLSX.write(wb, { bookType: 'csv', bookSST: true, type: 'array' })
+            try {
+                FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'comments_result.csv')
+            } catch (e) { 
+                if (typeof console !== 'undefined') console.log(e, wbout) 
+            }
+        },
+        //输出XLSX格式数据下载
+        Export3() {
+            var fix = document.querySelector('.el-table__fixed');
+            let table = document.querySelector("#Data4All").cloneNode(true);
+            if(fix)
+                var wb = XLSX.utils.table_to_book(table.removeChild(table.querySelector(".el-table__fixed")))
+            else
+                var wb = XLSX.utils.table_to_book(table)
+            var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' })
+            try {
+                FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'comments_result.xlsx')
+            } catch (e) { 
+                if (typeof console !== 'undefined') console.log(e, wbout) 
+            }
+        }
+    }
+}
+</script>
+
+<style lang="scss" scoped>
+#ResultTable5{
+    h2{
+        font-size:17px;
+    }
+}
+</style>
